@@ -12,7 +12,7 @@ export default function HomePage({ onStartTest }: HomePageProps) {
                 <div className="logo-container">
                     <div className="logo-wrapper">
                         <Image
-                            src="/public/mio-emocione-psychology-logo.jpg"
+                            src="/public/logo.jpg"
                             alt="Mio Emocione Logo"
                             className="logo-image"
                         />
