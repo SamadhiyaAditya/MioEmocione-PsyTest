@@ -1,6 +1,10 @@
 "use client"
 
-export default function HomePage({ onStartTest }) {
+interface HomePageProps {
+  onStartTest: (type: "intelligence" | "maturity") => void
+}
+
+export default function HomePage({ onStartTest }: HomePageProps) {
   return (
     <div className="home-page">
       <div className="home-content">

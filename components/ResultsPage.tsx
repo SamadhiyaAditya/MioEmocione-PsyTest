@@ -3,13 +3,32 @@
 import { useState } from "react"
 import { saveTestResult } from "@/lib/firebase"
 
-export default function ResultsPage({ scores, testType, participantInfo, onRetake, onGoHome }) {
+interface ParticipantInfo {
+  initials: string
+  gender: string
+  age: number
+}
+
+interface Scores {
+  totalScore: number
+  maxScore: number
+}
+
+interface ResultsPageProps {
+  scores: Scores
+  testType: "intelligence" | "maturity"
+  participantInfo: ParticipantInfo | null
+  onRetake: () => void
+  onGoHome: () => void
+}
+
+export default function ResultsPage({ scores, testType, participantInfo, onRetake, onGoHome }: ResultsPageProps) {
   const testName = testType === "intelligence" ? "Emotional Intelligence Test" : "Emotional Maturity Test"
   const [email, setEmail] = useState("")
   const [emailSaved, setEmailSaved] = useState(false)
 
-  const handleEmailSubmit = async () => {
-    if (participantInfo) {
+  const handleEmailSubmit = async (): Promise<void> => {
+    if (participantInfo && email) {
       await saveTestResult(participantInfo.initials, participantInfo, testType, scores, email)
       setEmailSaved(true)
     }

@@ -7,35 +7,46 @@ import QuizPage from "@/components/QuizPage"
 import ResultsPage from "@/components/ResultsPage"
 import "@/styles/quiz.css"
 
-export default function Home() {
-  const [currentPage, setCurrentPage] = useState("home")
-  const [participantInfo, setParticipantInfo] = useState(null)
-  const [testType, setTestType] = useState(null)
-  const [scores, setScores] = useState(null)
+interface ParticipantInfo {
+  initials: string
+  gender: string
+  age: number
+}
 
-  const handleStartTest = (type) => {
+interface Scores {
+  totalScore: number
+  maxScore: number
+}
+
+export default function Home() {
+  const [currentPage, setCurrentPage] = useState<string>("home")
+  const [participantInfo, setParticipantInfo] = useState<ParticipantInfo | null>(null)
+  const [testType, setTestType] = useState<"intelligence" | "maturity" | null>(null)
+  const [scores, setScores] = useState<Scores | null>(null)
+
+  const handleStartTest = (type: "intelligence" | "maturity"): void => {
     setTestType(type)
     setCurrentPage("participant-info")
   }
 
-  const handleParticipantInfo = (info) => {
+  const handleParticipantInfo = (info: ParticipantInfo): void => {
     setParticipantInfo(info)
     setCurrentPage("quiz")
   }
 
-  const handleQuizComplete = async (score) => {
+  const handleQuizComplete = async (score: Scores): Promise<void> => {
     setScores(score)
     setCurrentPage("results")
   }
 
-  const handleRetake = () => {
+  const handleRetake = (): void => {
     setScores(null)
     setCurrentPage("home")
     setParticipantInfo(null)
     setTestType(null)
   }
 
-  const handleGoHome = () => {
+  const handleGoHome = (): void => {
     setCurrentPage("home")
     setParticipantInfo(null)
     setTestType(null)
@@ -54,7 +65,7 @@ export default function Home() {
       {currentPage === "results" && scores && participantInfo && (
         <ResultsPage
           scores={scores}
-          testType={testType}
+          testType={testType as "intelligence" | "maturity"}
           participantInfo={participantInfo}
           onRetake={handleRetake}
           onGoHome={handleGoHome}

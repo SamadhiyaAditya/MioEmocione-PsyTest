@@ -3,10 +3,19 @@
 import { useState, useMemo, useEffect } from "react"
 import { getQuestions, calculateScores } from "@/lib/quizData"
 
-export default function QuizPage({ testType, onComplete }) {
+interface QuizPageProps {
+  testType: "intelligence" | "maturity"
+  onComplete: (scores: { totalScore: number; maxScore: number }) => void
+}
+
+interface Answers {
+  [key: string]: string
+}
+
+export default function QuizPage({ testType, onComplete }: QuizPageProps) {
   const questions = useMemo(() => getQuestions(testType), [testType])
   const [currentPageNum, setCurrentPageNum] = useState(1)
-  const [answers, setAnswers] = useState({})
+  const [answers, setAnswers] = useState<Answers>({})
 
   const questionsPerPage = 11
   const totalPages = Math.ceil(questions.length / questionsPerPage)
@@ -14,7 +23,7 @@ export default function QuizPage({ testType, onComplete }) {
   const endIdx = startIdx + questionsPerPage
   const currentQuestions = questions.slice(startIdx, endIdx)
 
-  const handleAnswerChange = (questionId, value) => {
+  const handleAnswerChange = (questionId: string, value: string): void => {
     setAnswers({ ...answers, [questionId]: value })
   }
 

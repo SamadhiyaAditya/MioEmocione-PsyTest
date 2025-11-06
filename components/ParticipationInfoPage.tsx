@@ -1,17 +1,30 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 
-export default function ParticipantInfoPage({ onComplete, testType }) {
+interface ParticipantInfoPageProps {
+  onComplete: (info: { initials: string; gender: string; age: number }) => void
+  testType: "intelligence" | "maturity" | null
+}
+
+interface FormErrors {
+  initials?: string
+  gender?: string
+  age?: string
+}
+
+export default function ParticipantInfoPage({ onComplete, testType }: ParticipantInfoPageProps) {
   const [initials, setInitials] = useState("")
   const [gender, setGender] = useState("")
   const [age, setAge] = useState("")
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
-    const newErrors = {}
+    const newErrors: FormErrors = {}
 
     if (!initials.trim()) {
       newErrors.initials = "Initials are required"
@@ -25,7 +38,7 @@ export default function ParticipantInfoPage({ onComplete, testType }) {
 
     if (!age) {
       newErrors.age = "Age is required"
-    } else if (isNaN(age) || age < 10 || age > 120) {
+    } else if (isNaN(Number(age)) || Number(age) < 10 || Number(age) > 120) {
       newErrors.age = "Please enter a valid age"
     }
 
@@ -80,7 +93,7 @@ export default function ParticipantInfoPage({ onComplete, testType }) {
               }}
               placeholder="e.g., JD"
               className="form-input"
-              maxLength="5"
+              maxLength={5}
             />
             {errors.initials && <p className="error-text">{errors.initials}</p>}
           </div>

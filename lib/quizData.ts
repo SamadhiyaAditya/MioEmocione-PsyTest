@@ -807,23 +807,45 @@ const emotionalIntelligenceQuestions = [
     },
   ]
   
-  export function getQuestions(testType) {
+  interface Option {
+    id: string
+    text: string
+    weight: number
+  }
+  
+  interface Question {
+    id: string
+    text: string
+    options: Option[]
+  }
+  
+  interface Answers {
+    [key: string]: string
+  }
+  
+  interface CalculatedScore {
+    totalScore: number
+    maxScore: number
+    testType: "intelligence" | "maturity"
+  }
+  
+  export function getQuestions(testType: "intelligence" | "maturity"): Question[] {
     return testType === "intelligence" ? emotionalIntelligenceQuestions : emotionalMaturityQuestions
   }
   
-  export function calculateScores(testType, answers) {
+  export function calculateScores(testType: "intelligence" | "maturity", answers: Answers): CalculatedScore {
     const questions = getQuestions(testType)
     let totalScore = 0
     let maxScore = 0
   
-    questions.forEach((question) => {
+    questions.forEach((question: Question): void => {
       const selectedOptionId = answers[question.id]
-      const selectedOption = question.options.find((opt) => opt.id === selectedOptionId)
+      const selectedOption = question.options.find((opt: Option): boolean => opt.id === selectedOptionId)
   
       if (selectedOption) {
         totalScore += selectedOption.weight
       }
-      maxScore += Math.max(...question.options.map((opt) => opt.weight))
+      maxScore += Math.max(...question.options.map((opt: Option): number => opt.weight))
     })
   
     return {
