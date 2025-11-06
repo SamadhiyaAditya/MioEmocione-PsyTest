@@ -1,66 +1,65 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+
+import { useState } from "react"
+import HomePage from "@/components/HomePage"
+import ParticipantInfoPage from "@/components/ParticipationInfoPage"
+import QuizPage from "@/components/QuizPage"
+import ResultsPage from "@/components/ResultsPage"
+import "@/styles/quiz.css"
 
 export default function Home() {
+  const [currentPage, setCurrentPage] = useState("home")
+  const [participantInfo, setParticipantInfo] = useState(null)
+  const [testType, setTestType] = useState(null)
+  const [scores, setScores] = useState(null)
+
+  const handleStartTest = (type) => {
+    setTestType(type)
+    setCurrentPage("participant-info")
+  }
+
+  const handleParticipantInfo = (info) => {
+    setParticipantInfo(info)
+    setCurrentPage("quiz")
+  }
+
+  const handleQuizComplete = async (score) => {
+    setScores(score)
+    setCurrentPage("results")
+  }
+
+  const handleRetake = () => {
+    setScores(null)
+    setCurrentPage("home")
+    setParticipantInfo(null)
+    setTestType(null)
+  }
+
+  const handleGoHome = () => {
+    setCurrentPage("home")
+    setParticipantInfo(null)
+    setTestType(null)
+    setScores(null)
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="app-container">
+      {currentPage === "home" && <HomePage onStartTest={handleStartTest} />}
+      {currentPage === "participant-info" && (
+        <ParticipantInfoPage onComplete={handleParticipantInfo} testType={testType} />
+      )}
+      {currentPage === "quiz" && testType && participantInfo && (
+        <QuizPage testType={testType} onComplete={handleQuizComplete} />
+      )}
+      {currentPage === "results" && scores && participantInfo && (
+        <ResultsPage
+          scores={scores}
+          testType={testType}
+          participantInfo={participantInfo}
+          onRetake={handleRetake}
+          onGoHome={handleGoHome}
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      )}
+    </main>
+  )
 }
