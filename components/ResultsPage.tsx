@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { saveTestResult } from "@/lib/firebase"
+import { useState, useEffect } from "react"
+import { saveTestResult, updateTestEmail } from "@/lib/firebase"
 
 interface ParticipantInfo {
   initials: string
@@ -26,10 +26,21 @@ export default function ResultsPage({ scores, testType, participantInfo, onRetak
   const testName = testType === "intelligence" ? "Emotional Intelligence Test" : "Emotional Maturity Test"
   const [email, setEmail] = useState("")
   const [emailSaved, setEmailSaved] = useState(false)
+  const [dataSaved, setDataSaved] = useState(false)
+
+  useEffect(() => {
+    const saveData = async () => {
+      if (participantInfo && !dataSaved) {
+        await saveTestResult(participantInfo.initials, participantInfo, testType, scores, null)
+        setDataSaved(true)
+      }
+    }
+    saveData()
+  }, [participantInfo, testType, scores, dataSaved])
 
   const handleEmailSubmit = async (): Promise<void> => {
     if (participantInfo && email) {
-      await saveTestResult(participantInfo.initials, participantInfo, testType, scores, email)
+      await updateTestEmail(participantInfo.initials, email)
       setEmailSaved(true)
     }
   }

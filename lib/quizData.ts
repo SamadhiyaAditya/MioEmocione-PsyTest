@@ -854,4 +854,3 @@ const emotionalIntelligenceQuestions = [
       testType,
     }
   }
-  

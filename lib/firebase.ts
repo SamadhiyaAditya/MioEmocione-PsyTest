@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app"
-import { getDatabase, ref, set, push, get } from "firebase/database"
+import { getDatabase, ref, set, push, get, update } from "firebase/database"
 import type { Database } from "firebase/database"
 
 let database: Database | undefined
@@ -8,13 +8,13 @@ function getFirebaseDatabase(): Database {
   if (!database) {
     const app = !getApps().length
       ? initializeApp({
-          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-          databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+          databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL!,
         })
       : getApp()
 
@@ -35,6 +35,9 @@ interface Score {
   maxScore: number
 }
 
+// Also stores the test reference so we can update email later
+let lastTestRef: any = null
+
 export async function saveTestResult(
   participantInitials: string,
   participantInfo: ParticipantInfo,
@@ -47,6 +50,9 @@ export async function saveTestResult(
   const testRef = ref(db, `participants/${initialsKey}/tests`)
   const newTestRef = push(testRef)
 
+  // Store reference for later email updates
+  lastTestRef = newTestRef
+
   await set(newTestRef, {
     testType,
     score: score.totalScore,
@@ -55,6 +61,17 @@ export async function saveTestResult(
     gender: participantInfo.gender,
     age: participantInfo.age,
     email: email || null,
+  })
+}
+
+export async function updateTestEmail(participantInitials: string, email: string): Promise<void> {
+  if (!lastTestRef) {
+    console.error("No test reference found")
+    return
+  }
+
+  await update(lastTestRef, {
+    email: email,
   })
 }
 
