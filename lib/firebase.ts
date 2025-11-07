@@ -8,13 +8,13 @@ function getFirebaseDatabase(): Database {
   if (!database) {
     const app = !getApps().length
       ? initializeApp({
-          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-          databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL!,
+        apiKey: "AIzaSyDjxR3APTUJ063dJr_7zza6vlh7T8nCmFY",
+        authDomain: "mioemocione-psytest.firebaseapp.com",
+        databaseURL: "https://mioemocione-psytest-default-rtdb.firebaseio.com",
+        projectId: "mioemocione-psytest",
+        storageBucket: "mioemocione-psytest.firebasestorage.app",
+        messagingSenderId: "952889826747",
+        appId: "1:952889826747:web:7d1cbb2ea593928acbb89e"
         })
       : getApp()
 
